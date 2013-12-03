@@ -14,7 +14,7 @@ if (myArgs.length == 1) {
         ledStripe.connect(32, "LPD8806", "/dev/spidev0.0");
         ledStripe.fill(0x00, 0x00, 0x00);
     }
-    if (myArgs[0] == "ci") {
+    if (myArgs[0] == "demo") {
         ledStripe.connect(32, "LPD8806", "/dev/spidev0.0");
         ledStripe.fill(0xFF, 0x00, 0x00);
         setTimeout(function(){
