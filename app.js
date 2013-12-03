@@ -2,6 +2,7 @@ var ledStripe = require('ledstripe');
 var settings = require('./settings');
 var pngparse = require('pngparse');
 var http = require('http');
+var fs = require('fs');
 
 var myArgs = process.argv.slice(2);
 if (myArgs.length == 1) {
@@ -16,31 +17,13 @@ if (myArgs.length == 1) {
         disconnect()
     }
     if (myArgs[0] == "ci") {
-        var options = {
-            hostname: settings.jenkinsHost,
-            path: settings.jenkinsPath
-        };
-
-        if (settings.jenkinsAuth) {
-            options.auth = settings.jenkinsAuth;
-        }
-
-        var req = http.request(options, function(res) {
-            res.on('data', function (chunk) {
-                handleCiAnswer(chunk);
-            });
-        });
-
-        req.on('error', function(e) {
-            console.log('problem with request: ' + e.message);
-        });
-
-        req.end();
-
-
-//        connect();
-//        ledStripe.fill(0x00, 0x00, 0x00);
-//        disconnect()
+        startWebserver();
+        connect();
+        console.log('calling jenkins every ' + settings.jenkinsInterval + ' seconds');
+        callJenkins();
+        setInterval(function(){
+            callJenkins();
+        }, settings.jenkinsInterval*1000);
     }
     if (myArgs[0] == "demo") {
         connect();
@@ -80,6 +63,20 @@ if (myArgs.length == 1) {
     )
 }
 
+function startWebserver() {
+    http.createServer(function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        fs.readFile(__dirname + '/jobs/index.html', function(err, data){
+            if (err) {
+                res.end('No data from Jenkins available');
+            } else {
+                res.end(data);
+            }
+        });
+    }).listen(3000);
+    console.log('Server running at http://127.0.0.1:3000/');
+}
+
 function connect() {
     ledStripe.connect(settings.numLEDs, settings.stripeType, settings.spiDevice);
 }
@@ -88,8 +85,32 @@ function disconnect() {
     ledStripe.disconnect();
 }
 
+function callJenkins() {
+    var options = {
+        hostname: settings.jenkinsHost,
+        path: settings.jenkinsPath
+    };
+
+    if (settings.jenkinsAuth) {
+        options.auth = settings.jenkinsAuth;
+    }
+
+    var req = http.request(options, function(res) {
+        res.on('data', function (content) {
+            handleCiAnswer(content);
+        });
+    });
+
+    req.on('error', function(e) {
+        console.log('problem with request: ' + e.message);
+    });
+
+    req.end();
+}
+
 function handleCiAnswer(content)  {
     var jobs = JSON.parse(content).jobs;
+    var htmlOutput = "";
 
     var pixelBuffer = new Buffer(settings.numLEDs*3);
     // clear buffer
@@ -98,14 +119,20 @@ function handleCiAnswer(content)  {
     }
     // fill projects into buffers
     for (var i=0; i<jobs.length; i++){
-        console.log(jobs[i].name);
+        htmlOutput += jobs[i].name + "<br />";
         for (var j=0;j<3;j++) {
             pixelBuffer[(i*3)+j] = settings.colors[jobs[i].color][j];
         }
     }
 
-    connect();
+    var date = new Date().toLocaleString();
+
+    var htmlHeader = "<html><head><title>Jenkins Projects</title></head>"
+                   + "<body><h1>Current Projects running on Jenkins</h1>"
+                    + "<h2>Last updated at "+ date +"</h2>";
+    var htmlFooter = "</body></html>";
+
+    fs.writeFile(__dirname + '/jobs/index.html', htmlHeader + htmlOutput + htmlFooter);
     ledStripe.sendRgbBuf(pixelBuffer);
-    disconnect();
 }
 
