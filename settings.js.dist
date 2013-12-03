@@ -1,0 +1,27 @@
+var settings = {};
+
+settings.numLEDs = 32;
+settings.stripeType = "LPD8806"; // choose between "LPD8806" and "WS2801"
+settings.spiDevice = "/dev/spidev0.0";
+
+settings.jenkinsHost = "www.yourCiServer.com";
+settings.jenkinsPath = "/view/All/api/json";
+settings.jenkinsAuth = "user:password";
+
+settings.colors = {
+    blue : [ 0x00, 0xFF, 0x00], // is use green color for a good build
+    blue_anime : [ 0x00, 0x55, 0x00],
+    red : [ 0xFF, 0x00, 0x00],
+    red_anime : [ 0x55, 0x00, 0x00],
+    yellow : [ 0xFF, 0xFF, 0x00],
+    yellow_anime : [ 0xFF, 0xFF, 0x00],
+
+    disabled : [ 0x55, 0x55, 0x55], // "grey"
+    disabled_anime : [ 0x55, 0x55, 0x55],
+    aborted: [ 0x55, 0x55, 0x55],
+    aborted_anime: [ 0x55, 0x55, 0x55],
+    nobuilt: [ 0x55, 0x55, 0x55],
+    nobuilt_anime: [ 0x55, 0x55, 0x55]
+};
+
+module.exports = settings;

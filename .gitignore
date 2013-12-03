@@ -12,5 +12,6 @@ logs
 results
 
 npm-debug.log
+settings.js
 node_modules
 .idea

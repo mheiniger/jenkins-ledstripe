@@ -1,6 +1,7 @@
 var ledStripe = require('ledstripe');
 var settings = require('./settings');
 var pngparse = require('pngparse');
+var http = require('http');
 
 var myArgs = process.argv.slice(2);
 if (myArgs.length == 1) {
@@ -15,9 +16,31 @@ if (myArgs.length == 1) {
         disconnect()
     }
     if (myArgs[0] == "ci") {
-        connect();
-        ledStripe.fill(0x00, 0x00, 0x00);
-        disconnect()
+        var options = {
+            hostname: settings.jenkinsHost,
+            path: settings.jenkinsPath
+        };
+
+        if (settings.jenkinsAuth) {
+            options.auth = settings.jenkinsAuth;
+        }
+
+        var req = http.request(options, function(res) {
+            res.on('data', function (chunk) {
+                handleCiAnswer(chunk);
+            });
+        });
+
+        req.on('error', function(e) {
+            console.log('problem with request: ' + e.message);
+        });
+
+        req.end();
+
+
+//        connect();
+//        ledStripe.fill(0x00, 0x00, 0x00);
+//        disconnect()
     }
     if (myArgs[0] == "demo") {
         connect();
@@ -67,3 +90,25 @@ function connect() {
 function disconnect() {
     ledStripe.disconnect();
 }
+
+function handleCiAnswer(content)  {
+    var jobs = JSON.parse(content).jobs;
+
+    var pixelBuffer = new Buffer(settings.numLEDs*3);
+    // clear buffer
+    for (var i=0; i<pixelBuffer.length; i++){
+        pixelBuffer[i]=0;
+    }
+    // fill projects into buffers
+    for (var i=0; i<jobs.length; i++){
+        console.log(jobs[i].name);
+        for (var j=0;j<3;j++) {
+            pixelBuffer[i+j] = settings.colors[jobs[i].color][j];
+        }
+    }
+
+    connect();
+    ledStripe.sendRgbBuf(pixelBuffer);
+    disconnect();
+}
+
