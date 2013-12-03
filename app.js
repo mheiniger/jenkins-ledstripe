@@ -61,9 +61,6 @@ if (myArgs.length == 1) {
     if (myArgs[0] == "image") {
         connect();
         ledStripe.fill(0x00, 0x00, 0x00);
-        disconnect();
-        settings.numLEDs = 30; // example images are 30px wide
-        connect();
         pngparse.parseFile(myArgs[1], function(err, data) {
             ledStripe.animate(data.data,'10m', function(){
                 ledStripe.fill(0x00, 0x00, 0x00);
@@ -103,7 +100,7 @@ function handleCiAnswer(content)  {
     for (var i=0; i<jobs.length; i++){
         console.log(jobs[i].name);
         for (var j=0;j<3;j++) {
-            pixelBuffer[i+j] = settings.colors[jobs[i].color][j];
+            pixelBuffer[(i*3)+j] = settings.colors[jobs[i].color][j];
         }
     }
 
