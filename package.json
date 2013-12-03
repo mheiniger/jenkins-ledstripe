@@ -13,6 +13,7 @@
     "url": "https://github.com/mheiniger/jenkins-ledstripe/issues"
   },
   "dependencies": {
-    "ledstripe": "0.0.2"
+    "ledstripe": "0.0.2",
+    "pngparse": "~2.0.1"
   }
 }

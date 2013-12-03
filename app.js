@@ -1,5 +1,6 @@
 var ledStripe = require('ledstripe');
 var settings = require('./settings');
+var pngparse = require('pngparse');
 
 var myArgs = process.argv.slice(2);
 if (myArgs.length == 1) {
@@ -33,13 +34,29 @@ if (myArgs.length == 1) {
         }, 3000);
     }
 
+} else if (myArgs.length == 2) {
+    if (myArgs[0] == "image") {
+        connect();
+        ledStripe.fill(0x00, 0x00, 0x00);
+        disconnect();
+        settings.numLEDs = 30; // example images are 30px wide
+        connect();
+        pngparse.parseFile(myArgs[1], function(err, data) {
+            ledStripe.animate(data.data,'10m', function(){
+                ledStripe.fill(0x00, 0x00, 0x00);
+                disconnect();
+            });
+        });
+    }
+
 } else {
     console.log( "\nUsage:\tnode app <command>\n\n"
         +"where \t<command> can be one of the following commands:\n\n"
         +"\toff : turn all leds off\n"
         +"\ton : turn all leds on\n"
         +"\tci : run ci mode\n"
-        +"\tdemo : demo mode without connecting to a real server\n\n"
+        +"\tdemo : demo mode without connecting to a real server\n"
+        +"\timage name.png : display an image \n"
     )
 }
 
