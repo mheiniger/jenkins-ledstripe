@@ -1,0 +1,18 @@
+{
+  "name": "jenkins-ledstripe",
+  "version": "0.0.0",
+  "description": "jenkins-ledstripe =================",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mheiniger/jenkins-ledstripe.git"
+  },
+  "author": "Michael Heiniger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mheiniger/jenkins-ledstripe/issues"
+  },
+  "dependencies": {
+    "ledstripe": "0.0.2"
+  }
+}
