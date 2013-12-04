@@ -122,7 +122,7 @@ function handleCiAnswer(content)  {
         htmlOutput += jobs[i].name + "<br />";
         for (var j=0;j<3;j++) {
             if (settings.reverseOrder) {
-                pixelBuffer[settings.numLEDs - ((i*3)+j)] = settings.colors[jobs[i].color][j];
+                pixelBuffer[(settings.numLEDs-1)*3 - (i*3) + j] = settings.colors[jobs[i].color][j];
             } else {
                 pixelBuffer[(i*3)+j] = settings.colors[jobs[i].color][j];
             }
