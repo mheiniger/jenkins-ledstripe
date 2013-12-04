@@ -109,7 +109,7 @@ function callJenkins() {
 }
 
 function handleCiAnswer(content)  {
-    var jobs = JSON.parse(content).jobs;
+    var jobs = JSON.parse(content).jobs.slice(0,settings.numLEDs);
     var htmlOutput = "";
 
     var pixelBuffer = new Buffer(settings.numLEDs*3);
@@ -121,7 +121,12 @@ function handleCiAnswer(content)  {
     for (var i=0; i<jobs.length; i++){
         htmlOutput += jobs[i].name + "<br />";
         for (var j=0;j<3;j++) {
-            pixelBuffer[(i*3)+j] = settings.colors[jobs[i].color][j];
+            if (settings.reverseOrder) {
+                pixelBuffer[settings.numLEDs - ((i*3)+j)] = settings.colors[jobs[i].color][j];
+            } else {
+                pixelBuffer[(i*3)+j] = settings.colors[jobs[i].color][j];
+            }
+
         }
     }
 
