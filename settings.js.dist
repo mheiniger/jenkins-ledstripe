@@ -5,9 +5,12 @@ settings.stripeType = "LPD8806"; // choose between "LPD8806" and "WS2801"
 settings.spiDevice = "/dev/spidev0.0";
 settings.reverseOrder = false;
 
-settings.jenkinsHost = "www.yourCiServer.com";
+settings.jenkinsUrl = "http://www.yourCiServer.com"
 settings.jenkinsPath = "/view/All/api/json";
-settings.jenkinsAuth = "user:password";
+settings.jenkinsAuth = {
+    user : "user",
+    password : "password"
+}
 settings.jenkinsInterval = 60; // time in seconds between getting new status from jenkins
 
 settings.colors = {
