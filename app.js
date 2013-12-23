@@ -1,6 +1,7 @@
 var ledStripe = require('ledstripe');
 var settings = require('./settings');
 var pngparse = require('pngparse');
+var request = require('request');
 var http = require('http');
 var fs = require('fs');
 
@@ -86,26 +87,19 @@ function disconnect() {
 }
 
 function callJenkins() {
-    var options = {
-        hostname: settings.jenkinsHost,
-        path: settings.jenkinsPath
-    };
-
-    if (settings.jenkinsAuth) {
-        options.auth = settings.jenkinsAuth;
-    }
-
-    var req = http.request(options, function(res) {
-        res.on('data', function (content) {
-            handleCiAnswer(content);
-        });
+    request(settings.jenkinsUrl + settings.jenkinsPath, {
+        'auth': {
+            'user': settings.jenkinsAuth.user,
+            'pass': settings.jenkinsAuth.password
+        }
+    },
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            handleCiAnswer(body); // Print the google web page.
+        } else {
+            console.log('problem with request: ' + error);
+        }
     });
-
-    req.on('error', function(e) {
-        console.log('problem with request: ' + e.message);
-    });
-
-    req.end();
 }
 
 function handleCiAnswer(content)  {
