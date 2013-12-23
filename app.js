@@ -1,9 +1,20 @@
 var ledStripe = require('ledstripe');
-var settings = require('./settings');
 var pngparse = require('pngparse');
 var request = require('request');
 var http = require('http');
 var fs = require('fs');
+
+try {
+    var settings = require('./settings');
+} catch (err) {
+    if (err.code == "MODULE_NOT_FOUND") {
+        console.log('\nCould not start:\nPlease set up your configuration by copying settings.js.dist to settings.js and adjust the needed values.\n');
+        process.exit(1);
+    } else {
+        console.log('Error: ', err);
+        process.exit(1);
+    }
+}
 
 var myArgs = process.argv.slice(2);
 if (myArgs.length == 1) {
