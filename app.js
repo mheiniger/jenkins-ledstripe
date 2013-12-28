@@ -96,17 +96,10 @@ function startWebserver() {
 
 function connect() {
     if (settings.stripeType != "none") {
-        console.log("trying to connect");
-        try {
-            ledStripe.connect(settings.numLEDs, settings.stripeType, settings.spiDevice);
-        }
-        catch (error) {
-            console.log(error);
+        if (!ledStripe.connect(settings.numLEDs, settings.stripeType, settings.spiDevice)) {
             console.log("Can't access device, running simulation mode");
             settings.stripeType = "none";
         }
-        console.log("connected");
-
     }
 }
 
@@ -125,7 +118,7 @@ function callJenkins() {
     },
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            handleCiAnswer(body); // Print the google web page.
+            handleCiAnswer(body);
         } else {
             console.log('problem with request: ' + error);
         }
