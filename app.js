@@ -8,8 +8,8 @@ try {
     var settings = require('./settings');
 } catch (err) {
     if (err.code == "MODULE_NOT_FOUND") {
-        console.log('\nCould not start:\nPlease set up your configuration by copying settings.js.dist to settings.js and adjust the needed values.\n');
-        process.exit(1);
+        fs.writeFileSync('settings.js', fs.readFileSync('settings.js.dist'));
+        var settings = require('./settings');
     } else {
         console.log('Error: ', err);
         process.exit(1);
@@ -70,6 +70,7 @@ if (myArgs.length == 1) {
     }
 
 } else {
+    console.log( "\nSettings for your led-stripe are in settings.js");
     console.log( "\nUsage:\tnode app <command>\n\n"
         +"where \t<command> can be one of the following commands:\n\n"
         +"\toff : turn all leds off\n"
