@@ -18,6 +18,11 @@ try {
 
 var myArgs = process.argv.slice(2);
 if (myArgs.length == 1) {
+    if (settings.stripeType == "none" && myArgs[0] != "ci"){
+        console.log('Simulation mode for command "' +myArgs[0] + '" has not been implemented yet');
+        process.exit(1);
+    }
+
     if (myArgs[0] == "off") {
         connect();
         ledStripe.fill(0x00, 0x00, 0x00);
@@ -90,11 +95,18 @@ function startWebserver() {
 }
 
 function connect() {
-    ledStripe.connect(settings.numLEDs, settings.stripeType, settings.spiDevice);
+    if (settings.stripeType != "none") {
+        if (!ledStripe.connect(settings.numLEDs, settings.stripeType, settings.spiDevice)) {
+            console.log("Can't access device, running simulation mode");
+            settings.stripeType = "none";
+        }
+    }
 }
 
 function disconnect() {
-    ledStripe.disconnect();
+    if (settings.stripeType != "none") {
+        ledStripe.disconnect();
+    }
 }
 
 function callJenkins() {
@@ -106,7 +118,7 @@ function callJenkins() {
     },
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            handleCiAnswer(body); // Print the google web page.
+            handleCiAnswer(body);
         } else {
             console.log('problem with request: ' + error);
         }
@@ -124,7 +136,11 @@ function handleCiAnswer(content)  {
     }
     // fill projects into buffers
     for (var i=0; i<jobs.length; i++){
-        htmlOutput += jobs[i].name + "<br />";
+        htmlOutput += '<span style="background-color:rgb('
+            + settings.colors[jobs[i].color][0] + ', '
+            + settings.colors[jobs[i].color][1] + ', '
+            + settings.colors[jobs[i].color][2] + ');">&nbsp;&nbsp;</span> '
+            + jobs[i].name + "<br />";
         for (var j=0;j<3;j++) {
             if (settings.reverseOrder) {
                 pixelBuffer[(settings.numLEDs-1)*3 - (i*3) + j] = settings.colors[jobs[i].color][j];
@@ -143,6 +159,8 @@ function handleCiAnswer(content)  {
     var htmlFooter = "</body></html>";
 
     fs.writeFile(__dirname + '/jobs/index.html', htmlHeader + htmlOutput + htmlFooter);
-    ledStripe.sendRgbBuf(pixelBuffer);
+    if (settings.stripeType != "none") {
+        ledStripe.sendRgbBuf(pixelBuffer);
+    }
 }
 

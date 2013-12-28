@@ -1,7 +1,7 @@
 var settings = {};
 
 settings.numLEDs = 32;
-settings.stripeType = "LPD8806"; // choose between "LPD8806" and "WS2801"
+settings.stripeType = "LPD8806"; // choose between "LPD8806", "WS2801" and "none" (web-view only)
 settings.spiDevice = "/dev/spidev0.0";
 settings.reverseOrder = false;
 
