@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title>Websocket Experiment</title>
+    <style type="text/css">
+        .blocks div {
+            width: 20px;
+            height: 100px;
+            background-color: black;
+            border: 1px solid silver;
+            margin: 2px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect();
+    socket.on('animate', function (data) {
+        for (var i = 0;i < Math.floor(data.length/3);i++) {
+            document.getElementById("block" + i).style.backgroundColor = 'rgb(' + data[i*3] + ',' + data[i*3+1] + ',' + data[i*3+2] + ')';
+        }
+    });
+</script>
+
+<div class="blocks">
+    <div id="block0"></div>
+    <div id="block1"></div>
+    <div id="block2"></div>
+    <div id="block3"></div>
+    <div id="block4"></div>
+    <div id="block5"></div>
+    <div id="block6"></div>
+    <div id="block7"></div>
+    <div id="block8"></div>
+    <div id="block9"></div>
+    <div id="block10"></div>
+    <div id="block11"></div>
+    <div id="block12"></div>
+    <div id="block13"></div>
+    <div id="block14"></div>
+    <div id="block15"></div>
+    <div id="block16"></div>
+    <div id="block17"></div>
+    <div id="block18"></div>
+    <div id="block19"></div>
+    <div id="block20"></div>
+    <div id="block21"></div>
+    <div id="block22"></div>
+    <div id="block23"></div>
+    <div id="block24"></div>
+    <div id="block25"></div>
+    <div id="block26"></div>
+    <div id="block27"></div>
+    <div id="block28"></div>
+    <div id="block29"></div>
+    <div id="block30"></div>
+    <div id="block31"></div>
+</div>
+
+
+</body>
+</html>
