@@ -1,6 +1,10 @@
 jenkins-ledstripe
 =================
 
+## Warning !
+This project is not up to date anymore. It was made for Nodejs 0.10 and the Raspberry Pi 1 and the Jenkins version that I was using back in 2013. So use this at your own risk.
+
+## Description
 Display the jenkins build-status of your projects with help of a raspberry-pi and an led-stripe.
 
 Setup
